@@ -1,0 +1,29 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/cockroachdb/pebble"
+)
+
+func main() {
+	// Abra o banco de dados Pebble
+	db, err := pebble.Open("./chaindata", &pebble.Options{})
+	if err != nil {
+		log.Fatalf("Erro ao abrir o banco de dados Pebble: %v", err)
+	}
+	defer db.Close()
+
+	// Ler os dados - exemplo simples para iteração
+	iter, err := db.NewIter(nil)
+	for iter.First(); iter.Valid(); iter.Next() {
+		key := iter.Key()
+		value := iter.Value()
+
+		fmt.Printf("Chave: %s, Valor: %s\n", key, value)
+	}
+	if err := iter.Close(); err != nil {
+		log.Fatalf("Erro ao fechar iterador: %v", err)
+	}
+}
